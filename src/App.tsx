@@ -632,7 +632,11 @@ export default function App() {
     setRole(userRole);
     setUsername(name);
     // Default route
-    setActiveTab('kasir');
+    if (userRole === 'kepsek') {
+      setActiveTab('laporan');
+    } else {
+      setActiveTab('kasir');
+    }
   };
 
   const handleLogout = () => {
@@ -671,19 +675,21 @@ export default function App() {
 
             {/* Middle Nav Tabs */}
             <nav className="hidden md:flex items-center space-x-1.5 bg-slate-100 p-1 rounded-xl">
-              <button
-                id="tab-nav-kasir"
-                onClick={() => setActiveTab('kasir')}
-                className={`px-4 py-2 text-xs font-bold rounded-lg transition-all cursor-pointer ${
-                  activeTab === 'kasir'
-                    ? 'bg-white text-blue-700 shadow-sm'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
-                }`}
-              >
-                Loket Transaksi
-              </button>
+              {role !== 'kepsek' && (
+                <button
+                  id="tab-nav-kasir"
+                  onClick={() => setActiveTab('kasir')}
+                  className={`px-4 py-2 text-xs font-bold rounded-lg transition-all cursor-pointer ${
+                    activeTab === 'kasir'
+                      ? 'bg-white text-blue-700 shadow-sm'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
+                  }`}
+                >
+                  Loket Transaksi
+                </button>
+              )}
               
-              {role === 'admin' && (
+              {(role === 'admin' || role === 'kepsek') && (
                 <button
                   id="tab-nav-laporan"
                   onClick={() => setActiveTab('laporan')}
@@ -697,29 +703,33 @@ export default function App() {
                 </button>
               )}
 
-              <button
-                id="tab-nav-datamaster"
-                onClick={() => setActiveTab('dataMaster')}
-                className={`px-4 py-2 text-xs font-bold rounded-lg transition-all cursor-pointer ${
-                  activeTab === 'dataMaster'
-                    ? 'bg-white text-blue-700 shadow-sm'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
-                }`}
-              >
-                Data Master & Sync
-              </button>
+              {role !== 'kepsek' && (
+                <button
+                  id="tab-nav-datamaster"
+                  onClick={() => setActiveTab('dataMaster')}
+                  className={`px-4 py-2 text-xs font-bold rounded-lg transition-all cursor-pointer ${
+                    activeTab === 'dataMaster'
+                      ? 'bg-white text-blue-700 shadow-sm'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
+                  }`}
+                >
+                  Data Master & Sync
+                </button>
+              )}
 
-              <button
-                id="tab-nav-gashub"
-                onClick={() => setActiveTab('gasHub')}
-                className={`px-4 py-2 text-xs font-bold rounded-lg transition-all cursor-pointer ${
-                  activeTab === 'gasHub'
-                    ? 'bg-white text-blue-700 shadow-sm'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
-                }`}
-              >
-                GAS Developer Hub
-              </button>
+              {role !== 'kepsek' && (
+                <button
+                  id="tab-nav-gashub"
+                  onClick={() => setActiveTab('gasHub')}
+                  className={`px-4 py-2 text-xs font-bold rounded-lg transition-all cursor-pointer ${
+                    activeTab === 'gasHub'
+                      ? 'bg-white text-blue-700 shadow-sm'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
+                  }`}
+                >
+                  GAS Developer Hub
+                </button>
+              )}
             </nav>
 
             {/* Right User Controls */}
@@ -750,15 +760,17 @@ export default function App() {
 
       {/* MOBILE NAV TABS CONTAINER - HIDDEN IN PRINT */}
       <div className="no-print md:hidden bg-white border-b border-slate-200 px-4 py-2 flex items-center justify-between shrink-0 overflow-x-auto gap-2">
-        <button
-          onClick={() => setActiveTab('kasir')}
-          className={`px-3 py-1.5 text-xs font-bold rounded-lg whitespace-nowrap ${
-            activeTab === 'kasir' ? 'bg-blue-600 text-white' : 'text-slate-600 bg-slate-50'
-          }`}
-        >
-          Loket Kasir
-        </button>
-        {role === 'admin' && (
+        {role !== 'kepsek' && (
+          <button
+            onClick={() => setActiveTab('kasir')}
+            className={`px-3 py-1.5 text-xs font-bold rounded-lg whitespace-nowrap ${
+              activeTab === 'kasir' ? 'bg-blue-600 text-white' : 'text-slate-600 bg-slate-50'
+            }`}
+          >
+            Loket Kasir
+          </button>
+        )}
+        {(role === 'admin' || role === 'kepsek') && (
           <button
             onClick={() => setActiveTab('laporan')}
             className={`px-3 py-1.5 text-xs font-bold rounded-lg whitespace-nowrap ${
@@ -768,22 +780,26 @@ export default function App() {
             Laporan
           </button>
         )}
-        <button
-          onClick={() => setActiveTab('dataMaster')}
-          className={`px-3 py-1.5 text-xs font-bold rounded-lg whitespace-nowrap ${
-            activeTab === 'dataMaster' ? 'bg-blue-600 text-white' : 'text-slate-600 bg-slate-50'
-          }`}
-        >
-          Master
-        </button>
-        <button
-          onClick={() => setActiveTab('gasHub')}
-          className={`px-3 py-1.5 text-xs font-bold rounded-lg whitespace-nowrap ${
-            activeTab === 'gasHub' ? 'bg-blue-600 text-white' : 'text-slate-600 bg-slate-50'
-          }`}
-        >
-          GAS Hub
-        </button>
+        {role !== 'kepsek' && (
+          <button
+            onClick={() => setActiveTab('dataMaster')}
+            className={`px-3 py-1.5 text-xs font-bold rounded-lg whitespace-nowrap ${
+              activeTab === 'dataMaster' ? 'bg-blue-600 text-white' : 'text-slate-600 bg-slate-50'
+            }`}
+          >
+            Master
+          </button>
+        )}
+        {role !== 'kepsek' && (
+          <button
+            onClick={() => setActiveTab('gasHub')}
+            className={`px-3 py-1.5 text-xs font-bold rounded-lg whitespace-nowrap ${
+              activeTab === 'gasHub' ? 'bg-blue-600 text-white' : 'text-slate-600 bg-slate-50'
+            }`}
+          >
+            GAS Hub
+          </button>
+        )}
       </div>
 
       {/* 2. MAIN WORKSPACE CONTENT AREA - HIDDEN IN PRINT */}
@@ -796,7 +812,7 @@ export default function App() {
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
           >
-            {activeTab === 'kasir' && (
+            {activeTab === 'kasir' && role !== 'kepsek' && (
               <Cashier 
                 students={students}
                 fees={fees}
@@ -807,23 +823,23 @@ export default function App() {
               />
             )}
 
-            {activeTab === 'laporan' && role === 'admin' && (
+            {activeTab === 'laporan' && (role === 'admin' || role === 'kepsek') && (
               <Reports 
                 transactions={transactions}
                 needs={needs}
-                onDeleteTransaction={handleDeleteTransaction}
-                onUpdateTransaction={handleUpdateTransaction}
+                onDeleteTransaction={role === 'admin' ? handleDeleteTransaction : undefined}
+                onUpdateTransaction={role === 'admin' ? handleUpdateTransaction : undefined}
                 onPrintTransaction={setSelectedPrintTransaction}
                 showToast={showToast}
                 showConfirm={showConfirm}
               />
             )}
 
-            {activeTab === 'gasHub' && (
+            {activeTab === 'gasHub' && role !== 'kepsek' && (
               <GasCodeHub />
             )}
 
-            {activeTab === 'dataMaster' && (
+            {activeTab === 'dataMaster' && role !== 'kepsek' && (
               <div className="space-y-6">
                 
                 {/* Spreadsheet Sync controls */}

@@ -30,6 +30,8 @@ export default function Login({ onLoginSuccess }: LoginProps) {
 
       if (trimmedUser === 'admin' && trimmedPass === 'AdminBayar2066') {
         onLoginSuccess('admin', 'Admin Koperasi');
+      } else if (trimmedUser === 'admin' && trimmedPass === 'kepsek2026') {
+        onLoginSuccess('kepsek', 'Kepala Sekolah');
       } else if (trimmedUser.toLowerCase() === 'kasir' && trimmedPass === 'kasir2066') {
         onLoginSuccess('kasir', 'Petugas Kasir');
       } else {

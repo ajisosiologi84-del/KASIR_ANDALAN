@@ -38,7 +38,7 @@ export interface Transaction {
   isCancelled?: boolean;
 }
 
-export type Role = 'admin' | 'kasir' | null;
+export type Role = 'admin' | 'kasir' | 'kepsek' | null;
 
 export interface AppState {
   role: Role;

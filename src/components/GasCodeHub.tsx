@@ -111,6 +111,8 @@ function checkLogin(username, password) {
   
   if (userClean === 'admin' && passClean === 'AdminBayar2066') {
     return { success: true, role: 'admin', displayName: 'Admin Koperasi' };
+  } else if (userClean === 'admin' && passClean === 'kepsek2026') {
+    return { success: true, role: 'kepsek', displayName: 'Kepala Sekolah' };
   } else if (userClean === 'kasir' && passClean === 'kasir2066') {
     return { success: true, role: 'kasir', displayName: 'Petugas Kasir' };
   } else {
@@ -905,6 +907,8 @@ function clearAllTransactions() {
         btn.textContent = 'Masuk ke Aplikasi';
         if (user === 'admin' && pass === 'AdminBayar2066') {
           loginAs('admin', 'Admin Koperasi (Lokal)');
+        } else if (user === 'admin' && pass === 'kepsek2026') {
+          loginAs('kepsek', 'Kepala Sekolah (Lokal)');
         } else if (user === 'kasir' && pass === 'kasir2066') {
           loginAs('kasir', 'Petugas Kasir (Lokal)');
         } else {
@@ -922,12 +926,21 @@ function clearAllTransactions() {
       document.getElementById('lblRole').textContent = role.toUpperCase();
       document.getElementById('txtPetugas1').value = name;
       
-      // Atur hak akses Laporan
+      // Atur hak akses Laporan & Kasir
       if (role === 'admin') {
         document.getElementById('tabBtnLaporan').classList.remove('hidden');
+        document.getElementById('tabBtnKasir').classList.remove('hidden');
         loadTransactionsHistory(); // Ambil riwayat untuk laporan
+        switchTab('kasir');
+      } else if (role === 'kepsek') {
+        document.getElementById('tabBtnLaporan').classList.remove('hidden');
+        document.getElementById('tabBtnKasir').classList.add('hidden');
+        loadTransactionsHistory();
+        switchTab('laporan');
       } else {
         document.getElementById('tabBtnLaporan').classList.add('hidden');
+        document.getElementById('tabBtnKasir').classList.remove('hidden');
+        switchTab('kasir');
       }
       
       // Ganti View
