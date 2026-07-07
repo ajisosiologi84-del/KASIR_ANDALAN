@@ -1,0 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+@layer utilities {
+  /* Print utilities */
+  @media print {
+    /* Hide absolutely everything else to avoid printing backgrounds, sidebars, modals */
+    body * {
+      visibility: hidden;
+    }
+    
+    #printable-receipt-area, #printable-receipt-area * {
+      visibility: visible;
+    }
+    
+    #printable-receipt-area {
+      position: absolute !important;
+      left: 0 !important;
+      top: 0 !important;
+      width: 100% !important;
+      height: auto !important;
+      min-height: 0 !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      border: none !important;
+      box-shadow: none !important;
+    }
+
+    body {
+      background: white !important;
+      color: black !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+    
+    /* Force compact margins for printing to fit single sheet */
+    @page {
+      size: auto; /* Allow either A4 or F4 depending on browser selection */
+      margin: 6mm 10mm;
+    }
+  }
+}
+
+/* Custom styles for A4 layout rendering in browser preview */
+.a4-preview {
+  width: 210mm;
+  min-height: 297mm;
+  padding: 15mm;
+  margin: 0 auto;
+  background: white;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.f4-preview {
+  width: 215mm;
+  min-height: 330mm;
+  padding: 15mm;
+  margin: 0 auto;
+  background: white;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+@media print {
+  .a4-preview, .f4-preview {
+    width: 100% !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: white !important;
+    box-shadow: none !important;
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "Sistem Kasir ANDALAN",
+  "description": "Aplikasi Kasir Seragam Sekolah terintegrasi dengan Google Sheets untuk pendataan pembayaran, pencarian siswa, kalkulasi biaya dengan terbilang rupiah, ceklist kebutuhan seragam, dan cetak kwitansi dwibagian.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
