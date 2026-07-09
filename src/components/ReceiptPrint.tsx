@@ -319,8 +319,8 @@ export default function ReceiptPrint({ transaction, needs, onClose }: ReceiptPri
               <span class="copy-tag">ADMIN</span>
               <div class="header-flex">
                 <div>
-                  <h1 class="title">Bukti Bayar Pembayaran Seragam</h1>
-                  <p class="subtitle">Koperasi Sekolah Al-Azhar • Bukti Transaksi Resmi (ADMIN)</p>
+                  <h1 class="title">Bukti Bayar</h1>
+                  <p class="subtitle">Koperasi • Bukti Transaksi Resmi (ADMIN)</p>
                 </div>
                 <div>
                   <p class="trx-id">${transaction.idTransaksi}</p>
@@ -413,8 +413,8 @@ export default function ReceiptPrint({ transaction, needs, onClose }: ReceiptPri
               <span class="copy-tag">ARSIP SEKOLAH</span>
               <div class="header-flex">
                 <div>
-                  <h1 class="title">Bukti Bayar Pembayaran Seragam</h1>
-                  <p class="subtitle">Koperasi Sekolah Al-Azhar • Bukti Transaksi Resmi (ARSIP SEKOLAH)</p>
+                  <h1 class="title">Bukti Bayar</h1>
+                  <p class="subtitle">Koperasi • Bukti Transaksi Resmi (ARSIP SEKOLAH)</p>
                 </div>
                 <div>
                   <p class="trx-id">${transaction.idTransaksi}</p>
@@ -522,10 +522,10 @@ export default function ReceiptPrint({ transaction, needs, onClose }: ReceiptPri
       <div className="flex justify-between items-start pb-2 print:pb-1 border-b border-slate-100">
         <div>
           <h2 className="text-xs print:text-[10px] font-black uppercase tracking-wider font-display text-slate-900">
-            Bukti Bayar Pembayaran Seragam
+            Bukti Bayar
           </h2>
           <p className="text-[8.5px] print:text-[7px] text-slate-400 font-medium">
-            Koperasi Sekolah Al-Azhar • Bukti Transaksi Resmi {titleSuffix && `(${titleSuffix})`}
+            Koperasi • Bukti Transaksi Resmi {titleSuffix && `(${titleSuffix})`}
           </p>
         </div>
         <div className="text-right">
