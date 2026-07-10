@@ -213,7 +213,7 @@ export default function App() {
           console.log(`[Sync] Mengunggah ${missingOnSheet.length} transaksi lokal baru ke Google Sheets...`);
           for (const tx of missingOnSheet) {
             try {
-              await fetch('/api/save-transaction', {
+              const res = await fetch('/api/save-transaction', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -222,8 +222,24 @@ export default function App() {
                   transaction: tx
                 })
               });
+              if (!res.ok) {
+                throw new Error(`Proxy status ${res.status}`);
+              }
             } catch (uploadErr) {
-              console.warn(`[Sync Warning] Gagal mengunggah transaksi ${tx.idTransaksi}:`, uploadErr);
+              console.warn(`[Sync Warning] Gagal mengunggah transaksi ${tx.idTransaksi} via proxy, mencoba langsung:`, uploadErr);
+              try {
+                await fetch(targetUrl, {
+                  method: 'POST',
+                  mode: 'no-cors',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    action: 'saveTransaction',
+                    transaction: tx
+                  })
+                });
+              } catch (directErr) {
+                console.error(`[Sync Error] Gagal mengunggah langsung ke Google Sheets:`, directErr);
+              }
             }
           }
         }
@@ -279,7 +295,7 @@ export default function App() {
     if (targetUrlIsSet(webAppUrl)) {
       try {
         console.log('Mengirim transaksi ke Google Sheets Web App via Proxy:', webAppUrl);
-        await fetch('/api/save-transaction', {
+        const res = await fetch('/api/save-transaction', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -290,7 +306,10 @@ export default function App() {
             transaction: newTx
           })
         });
-        console.log('Transaksi berhasil disimpan ke Google Sheets!');
+        if (!res.ok) {
+          throw new Error(`Proxy responded with status ${res.status}`);
+        }
+        console.log('Transaksi berhasil disimpan ke Google Sheets via Proxy!');
       } catch (err) {
         console.warn('Gagal menyimpan transaksi via proxy, mencoba langsung:', err);
         try {
@@ -365,11 +384,27 @@ export default function App() {
             showToast(`Transaksi ${targetId} terhapus lokal, tetapi gagal di Google Sheets: ${responseText}`, 'warning', 'Penghapusan Sebagian');
           }
         } else {
-          showToast(`Transaksi ${targetId} terhapus lokal, tetapi gagal menghubungi Google Sheets (HTTP ${res.status}).`, 'warning', 'Koneksi Gagal');
+          throw new Error(`Proxy responded with status ${res.status}`);
         }
       } catch (err: any) {
-        console.error(`Gagal menghapus transaksi ${targetId} dari Google Sheets:`, err);
-        showToast(`Transaksi ${targetId} terhapus lokal, tetapi gagal menghubungi Google Sheets.`, 'warning', 'Koneksi Gagal');
+        console.warn(`Gagal menghapus transaksi via proxy, mencoba langsung:`, err);
+        try {
+          await fetch(webAppUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              action: 'deleteTransaction',
+              idTransaksi: targetId
+            })
+          });
+          showToast(`Transaksi ${targetId} berhasil dihapus secara lokal dan instruksi hapus dikirim langsung ke Google Sheets.`, 'success', 'Penghapusan Sukses');
+        } catch (directErr) {
+          console.error(`Gagal menghapus transaksi langsung dari Google Sheets:`, directErr);
+          showToast(`Transaksi ${targetId} terhapus lokal, tetapi gagal menghubungi Google Sheets.`, 'warning', 'Koneksi Gagal');
+        }
       }
     } else {
       showToast(`Transaksi ${targetId} berhasil dihapus dari database lokal.`, 'success', 'Penghapusan Sukses');
@@ -409,11 +444,27 @@ export default function App() {
             showToast(`Transaksi ${updatedTx.idTransaksi} diperbarui secara lokal, tetapi gagal disinkronkan ke Google Sheets.`, 'warning', 'Pembaruan Sebagian');
           }
         } else {
-          showToast(`Transaksi ${updatedTx.idTransaksi} diperbarui secara lokal, tetapi gagal menghubungi Google Sheets (HTTP ${res.status}).`, 'warning', 'Koneksi Gagal');
+          throw new Error(`Proxy responded with status ${res.status}`);
         }
       } catch (err: any) {
-        console.error(`Gagal mengubah transaksi ${updatedTx.idTransaksi} di Google Sheets:`, err);
-        showToast(`Transaksi ${updatedTx.idTransaksi} diperbarui secara lokal, tetapi gagal menghubungi Google Sheets.`, 'warning', 'Koneksi Gagal');
+        console.warn(`Gagal mengubah transaksi via proxy, mencoba langsung:`, err);
+        try {
+          await fetch(webAppUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              action: 'editTransaction',
+              transaction: updatedTx
+            })
+          });
+          showToast(`Transaksi ${updatedTx.idTransaksi} diperbarui secara lokal dan instruksi edit dikirim langsung ke Google Sheets.`, 'success', 'Pembaruan Sukses');
+        } catch (directErr) {
+          console.error(`Gagal mengubah langsung di Google Sheets:`, directErr);
+          showToast(`Transaksi ${updatedTx.idTransaksi} diperbarui secara lokal, tetapi gagal menghubungi Google Sheets.`, 'warning', 'Koneksi Gagal');
+        }
       }
     } else {
       showToast(`Transaksi ${updatedTx.idTransaksi} diperbarui secara lokal.`, 'success', 'Pembaruan Sukses');
@@ -495,11 +546,28 @@ export default function App() {
             sheetsMessage = `tetapi gagal dihapus dari Google Sheets (Pesan: ${jsonResponse.message || responseText}).`;
           }
         } else {
-          sheetsMessage = `tetapi gagal dihapus dari Google Sheets (HTTP Status ${res.status}).`;
+          throw new Error(`Proxy responded with status ${res.status}`);
         }
       } catch (err: any) {
-        console.error('Gagal menghapus dari Google Sheets:', err);
-        sheetsMessage = `tetapi gagal menghubungi Google Sheets (${err.message || 'CORS/Koneksi'}).`;
+        console.warn('Gagal menghapus via proxy, mencoba langsung:', err);
+        try {
+          await fetch(webAppUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              action: 'deleteTransaction',
+              idTransaksi: exactId
+            })
+          });
+          sheetsSuccess = true;
+          sheetsMessage = 'dan instruksi hapus berhasil dikirim langsung ke Google Sheets.';
+        } catch (directErr: any) {
+          console.error('Gagal menghapus dari Google Sheets langsung:', directErr);
+          sheetsMessage = `tetapi gagal menghubungi Google Sheets (${directErr.message || 'CORS/Koneksi'}).`;
+        }
       }
     } else {
       sheetsMessage = '(Hanya dihapus lokal karena URL Web App belum diset).';
@@ -583,17 +651,32 @@ export default function App() {
             showToast(`Transaksi lokal terhapus, tetapi gagal di Google Sheets.`, 'warning', 'Pembaruan Sebagian');
           }
         } else {
-          sheetsMessage = `tetapi gagal menghubungi Google Sheets (HTTP Status ${res.status}).`;
-          setResetStatus('error');
-          setResetMessage(`Seluruh transaksi lokal berhasil dihapus, ${sheetsMessage}`);
-          showToast(`Transaksi lokal terhapus, tetapi gagal menghubungi Google Sheets (HTTP ${res.status}).`, 'warning', 'Koneksi Gagal');
+          throw new Error(`Proxy responded with status ${res.status}`);
         }
       } catch (err: any) {
-        console.error('Gagal menghapus semua transaksi di Google Sheets:', err);
-        sheetsMessage = `tetapi gagal menghubungi Google Sheets (${err.message || 'CORS/Koneksi'}).`;
-        setResetStatus('error');
-        setResetMessage(`Seluruh transaksi lokal berhasil dihapus, ${sheetsMessage}`);
-        showToast(`Transaksi lokal terhapus, tetapi gagal menghubungi Google Sheets.`, 'warning', 'Koneksi Gagal');
+        console.warn('Gagal menghapus semua transaksi via proxy, mencoba langsung:', err);
+        try {
+          await fetch(webAppUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              action: 'clearAllTransactions'
+            })
+          });
+          sheetsMessage = 'dan instruksi pengosongan berhasil dikirim langsung ke Google Sheets.';
+          setResetStatus('success');
+          setResetMessage(`Sukses: Seluruh transaksi berhasil dihapus dari database lokal ${sheetsMessage}`);
+          showToast(`Seluruh data transaksi berhasil dihapus secara permanen dari database lokal dan dikirim langsung ke Google Sheets.`, 'success', 'Penghapusan Sukses');
+        } catch (directErr: any) {
+          console.error('Gagal menghapus semua transaksi langsung:', directErr);
+          sheetsMessage = `tetapi gagal menghubungi Google Sheets (${directErr.message || 'CORS/Koneksi'}).`;
+          setResetStatus('error');
+          setResetMessage(`Seluruh transaksi lokal berhasil dihapus, ${sheetsMessage}`);
+          showToast(`Transaksi lokal terhapus, tetapi gagal menghubungi Google Sheets.`, 'warning', 'Koneksi Gagal');
+        }
       }
     } else {
       setResetStatus('success');

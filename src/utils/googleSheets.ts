@@ -23,6 +23,13 @@ export async function fetchSheetData<T>(
     response = await fetch(proxyUrl);
     if (response.ok) {
       text = await response.text();
+      // JIKA response OK tetapi isinya HTML (berarti diarahkan ke index.html atau halaman error HTML), kita harus throw error agar masuk ke catch fallback
+      if (text.trim().startsWith('<!DOCTYPE') || text.trim().startsWith('<html') || text.trim().startsWith('<!doctype')) {
+        throw new Error("Proxy returned HTML page instead of spreadsheet JSON");
+      }
+      if (!text.includes('google.visualization.Query.setResponse')) {
+        throw new Error("Proxy did not return valid google visualization response");
+      }
     } else {
       throw new Error(`Proxy responded with status ${response.status}`);
     }
