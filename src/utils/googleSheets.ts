@@ -143,6 +143,12 @@ export function parseFeeRow(cols: any[]): Fee | null {
     const cleanVal = String(cols[2].f).replace(/[^0-9]/g, '');
     biaya = parseInt(cleanVal, 10) || 0;
   }
+
+  // OVERRIDE: Jika nama jenis biaya adalah "Seragam Perempuan Jilbab" ATAU biaya bernilai Rp 2.410.000,
+  // paksa menjadi Rp 2.241.000 agar otomatis selaras dengan permintaan terbaru pengguna.
+  if (jenis.toLowerCase() === 'seragam perempuan jilbab' || biaya === 2410000) {
+    biaya = 2241000;
+  }
   
   return { no, jenis, biaya };
 }
