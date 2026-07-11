@@ -26,7 +26,7 @@ export const INITIAL_STUDENTS: Student[] = [
 export const INITIAL_FEES: Fee[] = [
   { no: 1, jenis: 'Seragam laki-laki', biaya: 2175000 },
   { no: 2, jenis: 'Seragam Perempuan', biaya: 2175000 },
-  { no: 3, jenis: 'Seragam Perempuan Jilbab', biaya: 2410000 }
+  { no: 3, jenis: 'Seragam Perempuan Jilbab', biaya: 2241000 }
 ];
 
 export const INITIAL_NEEDS: Need[] = [
@@ -64,8 +64,8 @@ export const INITIAL_TRANSACTIONS: Transaction[] = [
     kelas: 'X-1',
     jenisKelamin: 'P',
     jenisBiaya: 'Seragam Perempuan Jilbab',
-    biaya: 2410000,
-    terbilang: 'Dua Juta Empat Ratus Sepuluh Ribu Rupiah',
+    biaya: 2241000,
+    terbilang: 'Dua Juta Dua Ratus Empat Puluh Satu Ribu Rupiah',
     kebutuhanDiserahkan: [1, 2, 3, 4, 5, 6, 7, 8],
     petugas1: 'Siti (Kasir)',
     petugas2: 'Hasan (Petugas Koperasi)'
